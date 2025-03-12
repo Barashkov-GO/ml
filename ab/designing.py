@@ -1,3 +1,5 @@
+## Добавить SRM (Levene test)
+
 def ab_group_size(alpha, power, base, mde):
     from scipy.stats import norm
     import math
