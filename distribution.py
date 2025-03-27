@@ -39,9 +39,3 @@ class Distribution:
         """Welch, Fischer, Stewdent, Levene, 
         """
         pass
-
-    def fill_nulls():
-        pass
-
-    def outliers():
-        pass

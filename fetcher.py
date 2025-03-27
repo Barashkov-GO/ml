@@ -47,26 +47,45 @@ class Fetcher:
         except Exception as e:
             print(f"Ошибка подключения к базе данных: {e}")
 
-    def pg_exec_query_w_return(self, filename, d_type=[], **kwargs):
+    def pg_exec_many_queries(
+        self,
+        filenames_prep,
+        filename,
+        filename_close,
+        d_type=[],
+        parse_dates=None,
+        **kwargs,
+    ):
         import psycopg2
         import pandas as pd
         import tempfile
 
-        with open(f"{self.sql_path}/{filename}", "r") as file:
-            query = file.read().format(**kwargs).rstrip().rstrip(";")
-
         with psycopg2.connect(self.conn_str) as conn:
             cur = conn.cursor()
-            cur.execute(query)
+            if filenames_prep:
+                for filename_sub in filenames_prep:
+                    with open(f"{self.sql_path}/{filename_sub}", "r") as file:
+                        query = file.read().format(**kwargs)
+                        cur.execute(query)
+                        conn.commit()
             with tempfile.TemporaryFile() as tmpfile:
                 head = "HEADER"
+                with open(f"{self.sql_path}/{filename}", "r") as file:
+                    query = file.read().format(**kwargs).rstrip().rstrip(";")
                 copy_sql = f"COPY ({query}) TO STDOUT WITH CSV {head}"
                 cur.copy_expert(copy_sql, tmpfile)
                 tmpfile.seek(0)
-                df = pd.read_csv(tmpfile, dtype=(d_type if len(d_type) != 0 else None))
+                df = pd.read_csv(
+                    tmpfile,
+                    dtype=(d_type if len(d_type) != 0 else None),
+                    parse_dates=parse_dates,
+                )
+            if filename_close:
+                with open(f"{self.sql_path}/{filename_close}", "r") as file:
+                    query = file.read().format(**kwargs)
+                    cur.execute(query)
             conn.commit()
             cur.close()
-        conn.close()
 
         return df
 
