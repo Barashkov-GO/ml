@@ -8,15 +8,48 @@ CONN_STR = """
 """
 
 READ_CSV_KEYS = {
-    "sep", "delimiter", "header", "names", "index_col", "usecols",
-    "dtype", "engine", "converters", "true_values", "false_values",
-    "skiprows", "nrows", "na_values", "keep_default_na", "na_filter",
-    "skip_blank_lines", "parse_dates", "infer_datetime_format",
-    "dayfirst", "cache_dates", "iterator", "chunksize", "compression",
-    "thousands", "decimal", "lineterminator", "quotechar", "quoting",
-    "doublequote", "escapechar", "comment", "encoding", "encoding_errors",
-    "dialect", "error_bad_lines", "warn_bad_lines", "on_bad_lines",
-    "delim_whitespace", "low_memory", "memory_map", "float_precision"
+    "sep",
+    "delimiter",
+    "header",
+    "names",
+    "index_col",
+    "usecols",
+    "dtype",
+    "engine",
+    "converters",
+    "true_values",
+    "false_values",
+    "skiprows",
+    "nrows",
+    "na_values",
+    "keep_default_na",
+    "na_filter",
+    "skip_blank_lines",
+    "parse_dates",
+    "infer_datetime_format",
+    "dayfirst",
+    "cache_dates",
+    "iterator",
+    "chunksize",
+    "compression",
+    "thousands",
+    "decimal",
+    "lineterminator",
+    "quotechar",
+    "quoting",
+    "doublequote",
+    "escapechar",
+    "comment",
+    "encoding",
+    "encoding_errors",
+    "dialect",
+    "error_bad_lines",
+    "warn_bad_lines",
+    "on_bad_lines",
+    "delim_whitespace",
+    "low_memory",
+    "memory_map",
+    "float_precision",
 }
 
 
@@ -41,7 +74,10 @@ class Fetcher:
             self.ch_conn["database"] = db
 
     def __reloc_kwargs(self, **kwargs):
-        return ({k: v for k, v in kwargs.items() if k in READ_CSV_KEYS}, {k: v for k, v in kwargs.items() if k not in READ_CSV_KEYS})
+        return (
+            {k: v for k, v in kwargs.items() if k in READ_CSV_KEYS},
+            {k: v for k, v in kwargs.items() if k not in READ_CSV_KEYS},
+        )
 
     def pg_test_conn(self):
         import psycopg2
@@ -107,7 +143,13 @@ class Fetcher:
         return df
 
     def pg_exec_many_queries(
-        self, filenames_prep, filename, filename_close, d_type=[], parse_dates=None, **kwargs
+        self,
+        filenames_prep,
+        filename,
+        filename_close,
+        d_type=[],
+        parse_dates=None,
+        **kwargs,
     ):
         import psycopg2
         import pandas as pd
